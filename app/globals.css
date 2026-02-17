@@ -1,26 +1,98 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --neon-green: #22c55e;
+  --dark-void: #000000;
+  --surface-dark: #0a0a0a;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--dark-void);
+  color: #f0f0f0;
+}
+
+/* Efeito de brilho para os itens ativos */
+.glow-green {
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+}
+
+/* Scrollbar personalizada dark/verde */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #166534;
+  border-radius: 10px;
+}
+
+@layer utilities {
+  .animate-glitch {
+    animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+  }
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+
+  20% {
+    transform: translate(-2px, 2px);
+  }
+
+  40% {
+    transform: translate(-2px, -2px);
+  }
+
+  60% {
+    transform: translate(2px, 2px);
+  }
+
+  80% {
+    transform: translate(2px, -2px);
+  }
+
+  100% {
+    transform: translate(0);
+  }
+}
+
+.glitch-hover:hover {
+  text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9;
+  animation: glitch 0.2s infinite;
+}
+
+@keyframes glitch-anim {
+  0% { clip: rect(42px, 9999px, 44px, 0); transform: skew(0.5deg); }
+  20% { clip: rect(12px, 9999px, 56px, 0); transform: skew(0.2deg); }
+  40% { clip: rect(67px, 9999px, 23px, 0); transform: skew(0.8deg); }
+  60% { clip: rect(32px, 9999px, 89px, 0); transform: skew(0.1deg); }
+  80% { clip: rect(10px, 9999px, 12px, 0); transform: skew(0.4deg); }
+  100% { clip: rect(42px, 9999px, 44px, 0); transform: skew(0.5deg); }
+}
+
+.glitch-active {
+  animation: glitch-anim 0.2s infinite;
+  filter: hue-rotate(90deg) saturate(2);
+  position: relative;
+}
+
+.glitch-active::before {
+  content: "CRITICAL_ERROR";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 2rem;
+  z-index: 10;
 }

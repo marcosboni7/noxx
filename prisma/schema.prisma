@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  username       String    @unique
+  email          String    @unique
+  hashedPassword String
+  image          String?
+  bio            String?
+  role           String    @default("USER") // USER, STAFF, ADMIN, SUPREMO
+  
+  // --- SISTEMA DE XP ---
+  xp             Int       @default(0)
+  level          Int       @default(1)
+  lastXpGain     DateTime? @default(now())
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  following      Follow[]  @relation("Following")
+  followers      Follow[]  @relation("FollowedBy")
+  stream         Stream?
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  follower    User     @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("FollowedBy", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Stream {
+  id            String     @id @default(cuid())
+  name          String
+  description   String?
+  thumbnailUrl  String?
+  category      String?    // Campo para as categorias (Fortnite, GTA, etc)
+  
+  isLive        Boolean    @default(false)
+  isChatEnabled Boolean    @default(true)
+  
+  ingressId     String?    @unique
+  serverUrl     String?
+  streamKey     String?
+  
+  userId        String     @unique
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  messages      Message[]
+  donations     Donation[]
+
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([ingressId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  username  String
+  
+  streamId  String
+  stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([streamId])
+}
+
+model Donation {
+  id        String   @id @default(cuid())
+  amount    Int
+  currency  String   @default("BRL")
+  status    String   @default("pending") // pending, completed, failed
+  
+  stripeId  String?  @unique
+  message   String?
+  
+  streamId  String
+  stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([streamId])
+}
