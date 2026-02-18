@@ -5,12 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "lint": "next lint"
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",
-    "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/postcss": "^4.0.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "lucide-react": "^0.460.0",
@@ -20,7 +20,8 @@
     "pusher-js": "^8.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -30,7 +31,6 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "15.1.0",
     "prisma": "^6.1.0",
-    "tailwindcss": "^4.1.18",
     "typescript": "^5.7.0"
   }
 }
