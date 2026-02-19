@@ -1,7 +1,7 @@
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-import prisma from "../lib/prismadb"; // Use o @ para evitar o ../../../
+import prisma from "./prismadb"; // Se o arquivo prismadb.ts estiver na MESMA pasta lib
 
 export const authOptions: AuthOptions = {
   providers: [
