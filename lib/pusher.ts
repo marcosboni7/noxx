@@ -6,14 +6,15 @@ export const pusherServer = new PusherServer({
   appId: process.env.PUSHER_APP_ID!,
   key: process.env.NEXT_PUBLIC_PUSHER_APP_KEY!,
   secret: process.env.PUSHER_SECRET!,
-  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+  // Adicionamos um fallback para o build não quebrar se a variável estiver vazia
+  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || "us2", 
   useTLS: true,
 });
 
 // Lado do Cliente (Para ouvir as mensagens)
-export const pusherClient = new PusherClient(
-  process.env.NEXT_PUBLIC_PUSHER_APP_KEY!,
-  {
-    cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-  }
-);
+// No Next.js 15, o PusherClient deve ser instanciado apenas no navegador
+export const pusherClient = typeof window !== "undefined" 
+  ? new PusherClient(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || "us2",
+    })
+  : null;
