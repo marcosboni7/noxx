@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prismadb";
+import prisma from "../../../../lib/prismadb";
 import { getServerSession } from "next-auth"; // Para garantir que só o dono mude a live
 
 export async function PATCH(req: Request) {
