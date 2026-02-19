@@ -21,6 +21,7 @@ import { usePathname } from "next/navigation";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
+// --- TIPAGEM ---
 interface LiveNode {
   id: string;
   name: string;
@@ -33,7 +34,13 @@ interface LiveNode {
   };
 }
 
-// --- CONFIGURAÇÃO DAS CATEGORIAS (Cores mantidas ou ajustadas para o tema) ---
+// Interface que resolve o erro "Property isCollapsed does not exist"
+interface SidebarProps {
+  isCollapsed: boolean;
+  onCollapse: () => void;
+}
+
+// --- CATEGORIAS ---
 const SIDEBAR_CATEGORIES = [
   { id: "fortnite", name: "Fortnite", icon: Sword, color: "text-blue-400" },
   { id: "gta", name: "GTA V", icon: Car, color: "text-green-400" },
@@ -41,9 +48,8 @@ const SIDEBAR_CATEGORIES = [
   { id: "irl", name: "Conversa", icon: Coffee, color: "text-orange-300" },
 ];
 
-export const Sidebar = () => {
+export const Sidebar = ({ isCollapsed, onCollapse }: SidebarProps) => {
   const { data: session } = useSession();
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [liveNodes, setLiveNodes] = useState<LiveNode[]>([]);
   const [followedNodes, setFollowedNodes] = useState<LiveNode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,7 +80,7 @@ export const Sidebar = () => {
 
   return (
     <>
-      {/* BOTÃO MOBILE - AGORA LARANJA */}
+      {/* BOTÃO MOBILE */}
       <button 
         onClick={() => setIsOpenMobile(!isOpenMobile)}
         className="lg:hidden fixed bottom-6 right-6 z-[60] bg-orange-600 text-white p-4 rounded-2xl shadow-xl shadow-orange-500/20 active:scale-90 transition-transform"
@@ -96,7 +102,7 @@ export const Sidebar = () => {
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Menu_Principal</span>
           )}
           <button 
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={onCollapse}
             className="hidden lg:flex items-center justify-center w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-orange-500 transition-colors"
           >
             {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
@@ -197,7 +203,7 @@ export const Sidebar = () => {
           )}
         </div>
 
-        {/* RODAPÉ DE STATUS - GRAFICO LARANJA */}
+        {/* RODAPÉ DE STATUS */}
         {(!isCollapsed || isOpenMobile) && (
           <div className="absolute bottom-6 left-6 right-6">
             <div className="p-3 rounded-2xl bg-zinc-900/30 border border-zinc-800/50">
@@ -226,7 +232,17 @@ export const Sidebar = () => {
   );
 };
 
-const SidebarItem = ({ node, isCollapsed, isOpenMobile, isActive, setIsOpenMobile, isLive }: any) => {
+// --- COMPONENTE DE ITEM ---
+interface SidebarItemProps {
+  node: LiveNode;
+  isCollapsed: boolean;
+  isOpenMobile: boolean;
+  isActive: boolean;
+  setIsOpenMobile: (open: boolean) => void;
+  isLive: boolean;
+}
+
+const SidebarItem = ({ node, isCollapsed, isOpenMobile, isActive, setIsOpenMobile, isLive }: SidebarItemProps) => {
   const username = node.user?.username || "Unknown";
   const image = node.user?.image;
   const category = node.category || "Sem Categoria";
@@ -241,7 +257,6 @@ const SidebarItem = ({ node, isCollapsed, isOpenMobile, isActive, setIsOpenMobil
         ${isCollapsed && !isOpenMobile ? "justify-center" : ""}
       `}
     >
-      {/* AVATAR */}
       <div className="relative flex-shrink-0">
         <div className={`
           w-10 h-10 rounded-full flex items-center justify-center overflow-hidden border-2 transition-all
@@ -262,7 +277,6 @@ const SidebarItem = ({ node, isCollapsed, isOpenMobile, isActive, setIsOpenMobil
         )}
       </div>
 
-      {/* INFO */}
       {(!isCollapsed || isOpenMobile) && (
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-1">
@@ -284,7 +298,6 @@ const SidebarItem = ({ node, isCollapsed, isOpenMobile, isActive, setIsOpenMobil
         </div>
       )}
 
-      {/* INDICADOR ATIVO (LARANJA) */}
       {isActive && (
         <div className="absolute left-0 w-1 h-6 bg-orange-500 rounded-r-full shadow-[0_0_10px_rgba(249,115,22,1)]" />
       )}
